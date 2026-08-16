@@ -1,6 +1,7 @@
-﻿// 多轮真实功能测试：观察前台窗口、扫描控件、执行脚本、鼠标操作
+// 多轮真实功能测试：观察前台窗口、扫描控件、执行脚本、鼠标操作
 // 用法: node --experimental-strip-types test/rounds-real.ts [轮数]
 import * as plugin from '../src/index.ts'
+import { VIMINA_EXE } from './exe.ts'
 
 const ROUNDS = Number(process.argv[2] ?? 4)
 
@@ -11,7 +12,7 @@ const ctx: any = {
   effect() {},
 }
 plugin.apply(ctx, {
-  exePath: 'D:\\IO\\dotnet\\Vimina\\bin\\Debug\\net8.0-windows\\Vimina.exe',
+  exePath: VIMINA_EXE,
   timeoutMs: 30000,
 })
 

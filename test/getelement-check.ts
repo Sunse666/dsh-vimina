@@ -1,7 +1,8 @@
 import * as plugin from '../src/index.ts'
+import { VIMINA_EXE } from './exe.ts'
 const registered: any[] = []
 const ctx: any = { tools: { register(d: any) { registered.push(d); return () => {} } }, on() {}, effect() {} }
-plugin.apply(ctx, { exePath: 'D:\\IO\\dotnet\\Vimina\\bin\\Debug\\net8.0-windows\\Vimina.exe', timeoutMs: 20000 })
+plugin.apply(ctx, { exePath: VIMINA_EXE, timeoutMs: 20000 })
 function tool(n: string) { const d = registered.find((x: any) => x.name === n); if (!d) throw new Error('no tool ' + n); return (a: any) => (d as any).execute(a, {}) }
 
 async function main() {

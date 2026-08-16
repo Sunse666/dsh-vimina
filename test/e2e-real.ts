@@ -1,6 +1,7 @@
 // 真实端到端：通过插件工具调用 Vimina 的多个方法（需要能 spawn Vimina.exe 的环境）
 import { defineTool, type ToolDefinition } from '@deepseek-ai/dsh-tools'
 import * as plugin from '../src/index.ts'
+import { VIMINA_EXE } from './exe.ts'
 
 const registered: ToolDefinition[] = []
 const ctx: any = {
@@ -8,7 +9,7 @@ const ctx: any = {
   on() {},
   effect() {},
 }
-plugin.apply(ctx, { exePath: 'D:\\IO\\dotnet\\Vimina\\bin\\Debug\\net8.0-windows\\Vimina.exe', timeoutMs: 30000 })
+plugin.apply(ctx, { exePath: VIMINA_EXE, timeoutMs: 30000 })
 
 async function callTool(name: string, args: any) {
   const def = registered.find((d) => d.name === name)

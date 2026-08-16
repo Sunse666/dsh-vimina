@@ -1,6 +1,7 @@
 // 测试 dsh-vimina 插件：加载插件源码，stub ctx.tools，调用各工具验证与 Vimina 的通信。
 import { defineTool, type ToolDefinition } from '@deepseek-ai/dsh-tools'
 import * as plugin from '../src/index.ts'
+import { VIMINA_EXE } from './exe.ts'
 
 // ---- stub ctx（只提供插件需要的 tools 注册 + on('dispose')）----
 const registered: ToolDefinition[] = []
@@ -16,7 +17,7 @@ const ctx: any = {
 }
 
 // ---- apply 插件 ----
-plugin.apply(ctx, { exePath: 'D:\\IO\\dotnet\\Vimina\\bin\\Debug\\net8.0-windows\\Vimina.exe', timeoutMs: 30000 })
+plugin.apply(ctx, { exePath: VIMINA_EXE, timeoutMs: 30000 })
 
 console.log('[ok] 插件已 apply，注册工具数:', registered.length)
 for (const t of registered) console.log('  -', t.name)

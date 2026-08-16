@@ -1,6 +1,7 @@
 // 全覆盖测试：逐轮调用全部 25 个工具，统计每轮 OK/FAIL
 // 用法: node --experimental-strip-types test/full-coverage.ts [轮数]
 import * as plugin from '../src/index.ts'
+import { VIMINA_EXE } from './exe.ts'
 
 const ROUNDS = Number(process.argv[2] ?? 3)
 const registered: any[] = []
@@ -10,7 +11,7 @@ const ctx: any = {
   effect() {},
 }
 plugin.apply(ctx, {
-  exePath: 'D:\\IO\\dotnet\\Vimina\\bin\\Debug\\net8.0-windows\\Vimina.exe',
+  exePath: VIMINA_EXE,
   timeoutMs: 20000,
 })
 function tool(name: string) {

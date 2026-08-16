@@ -62,7 +62,7 @@
 
 前置：已构建 Vimina（`dotnet build`），或下载发布版拿到 `Vimina.exe`。
 
-1. 把本目录复制到 DSH 能解析的位置（或作为 npm 包安装），`npm install`。
+1. 安装依赖：`npm install`（或先 `npm run build` 生成 `lib/`）。
 2. 用 patch 挂载：
 
 ```bash
@@ -81,7 +81,7 @@ dsh web --patch path/to/dsh-plugin/cordis.yml
 ## 开发与测试
 
 ```bash
-cd dsh-plugin
+cd dsh-vimina
 npm install
 npx tsc              # 类型检查 + 编译到 lib/
 
@@ -92,8 +92,18 @@ node --experimental-strip-types test/client-unit.ts
 node --experimental-strip-types test/plugin-test.ts
 ```
 
-> 注意：`plugin-test.ts` 会真实 spawn Vimina 执行工具，在受限沙箱里会被 EPERM 拦截
-> （判定为 SKIP）；在正常 DSH 环境可直接跑通。
+真实设备测试（需要本机 Vimina.exe）通过环境变量指定可执行文件，仓库内不写死任何本机路径：
+
+```bash
+# PowerShell
+$env:VIMINA_EXE = 'C:\path\to\Vimina.exe'
+node --experimental-strip-types test/e2e-real.ts
+node --experimental-strip-types test/full-coverage.ts 5
+```
+
+> `VIMINA_EXE` 未设置时回退为 `'Vimina.exe'`（按 PATH 查找）；
+> `plugin-test.ts` 在受限沙箱里会被 EPERM 拦截（判定为 SKIP），在正常 DSH 环境可直接跑通。
+> 请勿在提交的代码/配置里写死本机绝对路径。
 
 ## AI 使用指南（注入 vimina_info）
 
