@@ -29,13 +29,13 @@ export const USAGE_GUIDE = `# Vimina 使用指南（AI 代理必读）
 
 ## 分任务 Playbook
 
-### A. 浏览网页（如 B站）
+### A. 浏览视频网站 / 网页
 1. vimina_getWindows → 确认目标浏览器窗口在前台（标题匹配）。
 2. vimina_scan → 观察框架控件；若要网页内容，先滚动。
 3. 滚动：vimina_moveMouse 悬停内容区 + vimina_scroll delta=-N（负数向下）→ vimina_scan 看新控件。
 4. 打开视频/链接：vimina_clickAt 真实点击控件中心（缺省 backend）。
-5. 看评论区：滚动到底（vimina_scroll 或 vimina_key End）→ vimina_scan 读取评论控件
-   （表情、点赞数、回复按钮）；折叠评论点"点击查看"后重新 scan。
+5. 读取评论区：滚动到底（vimina_scroll 或 vimina_key End）→ vimina_scan 观察评论区控件
+   （点赞、回复按钮等）；正文文字未必暴露为控件，必要时配合截图读取。
 6. 回顶部：vimina_key Home。
 
 ### B. 桌面应用自动化

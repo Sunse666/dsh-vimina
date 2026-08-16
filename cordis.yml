@@ -1,9 +1,9 @@
 # 挂载 dsh-vimina 插件（将 Vimina 的 GUI 自动化能力注册为 DSH 工具）。
-# 用法: dsh web --patch path/to/dsh-plugin/cordis.yml
+# 用法: dsh web --patch path/to/dsh-vimina/cordis.yml
 - insert:
     - id: vimina
       name: dsh-vimina
       config:
-        # 改为你机器上 Vimina.exe 的绝对路径（如 C:\Tools\Vimina\Vimina.exe）
+        # 改为你机器上 Vimina.exe 的绝对路径（如 D:\Tools\Vimina\Vimina.exe）
         exePath: /absolute/path/to/Vimina.exe
         timeoutMs: 60000

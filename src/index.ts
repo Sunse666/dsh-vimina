@@ -317,12 +317,16 @@ export function apply(ctx: Context, config: Config = {}): void {
     }),
     mkTool(client, timeoutMs, {
       name: 'vimina_screenshot',
-      description: '截取全屏并保存，返回图片路径。',
+      description: '截取屏幕并保存，返回图片路径。默认全屏；传 x/y/w/h 只截取该区域（如只截一个视频封面，识别更快、更省 token）。',
       parameters: {
         filename: { type: 'string', description: '可选文件名（默认自动）' },
+        x: { type: 'integer', description: '区域左上角 X（可选）' },
+        y: { type: 'integer', description: '区域左上角 Y（可选）' },
+        w: { type: 'integer', description: '区域宽度（可选）' },
+        h: { type: 'integer', description: '区域高度（可选）' },
       },
       method: 'screenshot',
-      mapArgs: (a) => ({ filename: a.filename ?? undefined }),
+      mapArgs: (a) => ({ filename: a.filename ?? undefined, x: a.x ?? undefined, y: a.y ?? undefined, w: a.w ?? undefined, h: a.h ?? undefined }),
     }),
     mkTool(client, timeoutMs, {
       name: 'vimina_getElement',

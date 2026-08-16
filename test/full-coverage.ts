@@ -1,6 +1,9 @@
 // 全覆盖测试：逐轮调用全部 25 个工具，统计每轮 OK/FAIL
 // 用法: node --experimental-strip-types test/full-coverage.ts [轮数]
 import * as plugin from '../src/index.ts'
+
+// 测试目标窗口标题：默认留空（扫前台窗口），可用 VIMINA_TEST_TITLE 覆盖
+const TARGET_TITLE = process.env.VIMINA_TEST_TITLE ?? ''
 import { VIMINA_EXE } from './exe.ts'
 
 const ROUNDS = Number(process.argv[2] ?? 3)
@@ -40,7 +43,7 @@ async function runRound(round: number): Promise<Record<string, string>> {
   await call('vimina_vmaStatus', {})
 
   // ---- 扫描/查询 ----
-  await call('vimina_scanByTitle', { title: 'Cent Browser' })
+  await call('vimina_scanByTitle', { title: TARGET_TITLE })
   await call('vimina_getElement', { name: '播放' })
   await call('vimina_getControlAt', { x: 960, y: 540 })
 
@@ -53,7 +56,7 @@ async function runRound(round: number): Promise<Record<string, string>> {
     await call('vimina_clickAt', { x: 10, y: 10, backend: true })
   }
   // clickLabel：依赖 scanByTitle 持久化的标签映射
-  const stb = await tool('vimina_scanByTitle')({ title: 'Cent Browser' }) as any
+  const stb = await tool('vimina_scanByTitle')({ title: TARGET_TITLE }) as any
   const stbClickable = (stb?.controls ?? []).find((c: any) => c.enabled)
   if (stbClickable) {
     await call('vimina_clickLabel', { label: stbClickable.label })

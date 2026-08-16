@@ -56,11 +56,11 @@
 | 工具 | 底层方法 | 说明 |
 |---|---|---|
 | `vimina_info` | info | 能力自描述 |
-| `vimina_screenshot` | screenshot | 截图并返回路径 |
+| `vimina_screenshot` | screenshot | 截图并返回路径（默认全屏；可传 x/y/w/h 只截区域，识图更快更省 token） |
 
 ## 安装与挂载
 
-作为 DSH profile 依赖安装（推荐，注册即用，见 README 下方案例），或：
+作为 DSH profile 依赖安装（推荐，注册即用，见下），或：
 
 1. 安装依赖：`npm install`（或先 `npm run build` 生成 `lib/`）。
 2. 用 patch 挂载：
@@ -97,6 +97,30 @@ dsh web --patch path/to/dsh-vimina/cordis.yml
 
 只要 `Vimina.exe` 在以上任一位置，就无需手动填写路径；启动失败时工具会返回明确的配置指引。
 
+## 区域截图
+
+`vimina_screenshot` 默认全屏；传 `x / y / w / h` 只截指定区域（坐标相对屏幕左上角）：
+
+| 参数 | 类型 | 说明 |
+|---|---|---|
+| `filename` | string | 可选，保存文件名（默认自动生成） |
+| `x` / `y` | integer | 区域左上角坐标（可选） |
+| `w` / `h` | integer | 区域宽度 / 高度（可选） |
+
+- 未传 `x/y/w/h` 时行为不变（全屏，完全兼容旧用法）。
+- 区域越界时自动夹取到屏幕边界内（右/下超出部分被裁掉）。
+- 返回结果含实际捕获信息（`x` / `y` / `width` / `height`），便于核对落盘文件尺寸。
+- **用途**：只需识别局部（如视频封面、按钮、某块区域文字）时直接截取目标区域，
+  图像越小视觉识别越快、消耗 token 越少。
+- VMA 脚本内同样支持：`screenshot 文件名 x y w h`（语句形式）或
+  `screenshot("文件名", x, y, w, h)`（函数形式）。
+
+示例：
+
+```js
+vimina_screenshot({ filename: 'cover.png', x: 100, y: 200, w: 400, h: 300 })
+```
+
 ## 开发与测试
 
 ```bash
@@ -111,7 +135,7 @@ node --experimental-strip-types test/client-unit.ts
 node --experimental-strip-types test/plugin-test.ts
 ```
 
-真实设备测试（需要本机 Vimina.exe）通过环境变量指定可执行文件，仓库内不写死任何本机路径：
+真实设备测试（需要本机 Vimina.exe）通过环境变量指定可执行文件：
 
 ```bash
 # PowerShell
@@ -142,18 +166,13 @@ node --experimental-strip-types test/full-coverage.ts 5
 真实使用中验证过的经验，模型在操作浏览器页面时请遵循：
 
 - **网页内容要滚动后才暴露给 UIA**：打开页面后先 `vimina_scan` 只能看到浏览器框架控件；
-  滚动（`vimina_scroll` / `vimina_key` PageDown / End）后再 scan，才能看到播放器按钮、
-  评论区、右侧推荐列表等网页控件。
+  滚动（`vimina_scroll` / `vimina_key` PageDown / End）后再 scan，才能看到网页控件。
 - **点击网页必须用真实点击**：`vimina_clickAt` 缺省（backend=false）就是真实点击并激活窗口，
   浏览器场景下不要用 `backend:true`（FlaUI 后台点击对 Chromium 网页无效）。
 - **`vimina_getControlAt` 对网页多返回外层容器**：网页内层控件不暴露 UIA 时，坐标命中
   的往往是页面容器而非精确控件，以 `vimina_scan` 为准。
-- **评论文本多以表情/按钮形式暴露**：B站评论区可见的是表情（如 `[星幕回响_开心]`）、
-  点赞数、回复按钮等控件；折叠评论可点击"点击查看"展开后再 scan。
-
 ## 说明
 
 - 插件懒启动 Vimina 子进程，插件卸载时自动关闭（`ctx.effect`）。
 - `ViminaClient` 已导出并支持注入 `spawnFn`，便于单元测试。
 - 环境变量 `VIMINA_API_PORT` / `VIMINA_API_TOKEN` 可在 spawn 时注入。
-- ⚠️ 不要在 `dsh-plugin/node_modules` 里放跨盘 junction（会破坏 Vimina 的 MSBuild `**/*.xaml` glob）。
