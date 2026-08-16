@@ -1,0 +1,7 @@
+node_modules/
+lib/
+*.tsbuildinfo
+test/_*.vma
+test/_*.out.txt
+test/_*.cjs
+data/

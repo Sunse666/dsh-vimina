@@ -1,0 +1,56 @@
+{
+  "name": "dsh-vimina",
+  "description": "DeepSeek Harness Cordis plugin: drive Vimina Windows GUI automation via stdio (serve/call). Registers 26 vimina_* tools (scan/click/input/key/VMA scripts/screenshot/window/mouse).",
+  "version": "0.1.0",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "cordis",
+    "plugin",
+    "vimina",
+    "windows",
+    "automation",
+    "gui",
+    "uia"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/<your-github-name>/dsh-vimina.git",
+    "directory": "dsh-plugin"
+  },
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/types/**/*.d.ts"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types test/client-unit.ts && node --experimental-strip-types test/plugin-test.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.0",
+    "@deepseek-ai/dsh-tools": "^0.1.0-rc.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0"
+  }
+}
