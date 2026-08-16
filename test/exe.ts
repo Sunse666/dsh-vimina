@@ -1,6 +1,8 @@
 /**
- * 真实设备测试用的 Vimina 可执行文件路径。
- * 从环境变量 VIMINA_EXE 解析；未设置时回退到 PATH 上的 'Vimina.exe'。
+ * 真实设备测试用 Vimina 可执行文件路径。
+ * 复用插件自身的 resolveExePath（VIMINA_EXE 环境变量 → 自动探测 → PATH），
  * 仓库内不写死任何机器本地路径。
  */
-export const VIMINA_EXE = process.env.VIMINA_EXE ?? 'Vimina.exe'
+import { resolveExePath } from '../src/index.ts'
+
+export const VIMINA_EXE = resolveExePath()

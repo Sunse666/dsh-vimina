@@ -60,23 +60,42 @@
 
 ## 安装与挂载
 
-前置：已构建 Vimina（`dotnet build`），或下载发布版拿到 `Vimina.exe`。
+作为 DSH profile 依赖安装（推荐，注册即用，见 README 下方案例），或：
 
 1. 安装依赖：`npm install`（或先 `npm run build` 生成 `lib/`）。
 2. 用 patch 挂载：
 
 ```bash
-dsh web --patch path/to/dsh-plugin/cordis.yml
+dsh web --patch path/to/dsh-vimina/cordis.yml
 ```
 
-3. 修改 `cordis.yml` 里的 `exePath` 指向你的 `Vimina.exe`。
+**通常无需手动配置路径**：插件按以下优先级自动解析 `Vimina.exe`（详见"配置"）。
+
+### 作为 DSH profile 插件安装（推荐）
+
+1. 在你的 DSH profile 目录（如 `$DSH_HOME/profiles/web`）执行：
+   ```bash
+   dsh plugin --profile web add <包名或本地路径>
+   ```
+   （或直接往 `package.json` 的 `dependencies` 加 `"dsh-vimina": "<包名或路径>"` 后 `pnpm install`，并把 `dsh-vimina` 加入 `dsh.profile.bundles`。）
+2. 插件声明了 `dsh.bundle.patch`，加载器会自动插入 `vimina` 条目。
+3. 重启 DSH web，设置 → 插件 → vimina 可看到 26 个工具与配置项。
 
 ## 配置
 
 | 字段 | 默认 | 说明 |
 |---|---|---|
-| `exePath` | `Vimina.exe` | Vimina 可执行文件路径 |
+| `exePath` | 自动解析 | Vimina 可执行文件路径 |
 | `timeoutMs` | 60000 | 单次工具调用超时 |
+
+`exePath` 解析优先级：
+
+1. **显式配置**：DSH web 设置 → 插件 → vimina（推荐），或 profile 的 `cordis.patch.yml`、`--patch` 补丁
+2. **环境变量** `VIMINA_EXE`
+3. **自动探测**常见安装位置（`%LOCALAPPDATA%\Programs\Vimina\Vimina.exe`、`%ProgramFiles%\Vimina\Vimina.exe`、`%ProgramFiles(x86)%\Vimina\Vimina.exe`、当前目录）
+4. **回退**：PATH 上的 `Vimina.exe`
+
+只要 `Vimina.exe` 在以上任一位置，就无需手动填写路径；启动失败时工具会返回明确的配置指引。
 
 ## 开发与测试
 

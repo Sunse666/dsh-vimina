@@ -1,4 +1,6 @@
 import { spawn as nodeSpawn, type ChildProcessWithoutNullStreams, type SpawnOptionsWithoutStdio } from 'node:child_process'
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
 import type { Context } from '@deepseek-ai/cordis'
 import { defineTool, type ParameterSchemaSpec } from '@deepseek-ai/dsh-tools'
 import { TOOL_NAMES, USAGE_GUIDE } from './usage.ts'
@@ -20,6 +22,35 @@ export const Config: Schema<Config> = Schema.object({
   exePath: Schema.string().default('Vimina.exe'),
   timeoutMs: Schema.number().default(60000),
 })
+
+// ---------- executable resolution ----------
+
+/** 常见安装位置探测（Windows）。 */
+const PROBE_PATHS = [
+  () => join(process.env.LOCALAPPDATA ?? '', 'Programs', 'Vimina', 'Vimina.exe'),
+  () => join(process.env.ProgramFiles ?? '', 'Vimina', 'Vimina.exe'),
+  () => join(process.env['ProgramFiles(x86)'] ?? '', 'Vimina', 'Vimina.exe'),
+  () => join(process.cwd(), 'Vimina.exe'),
+]
+
+/**
+ * 解析 Vimina 可执行文件路径，优先级：
+ * 1) 显式配置 exePath（设置页 / profile 补丁 / --patch）
+ * 2) 环境变量 VIMINA_EXE
+ * 3) 自动探测常见安装位置
+ * 4) 回退 PATH 上的 'Vimina.exe'
+ */
+export function resolveExePath(configured?: string): string {
+  const explicit = configured?.trim()
+  if (explicit) return explicit
+  const env = process.env.VIMINA_EXE?.trim()
+  if (env) return env
+  for (const probe of PROBE_PATHS) {
+    const candidate = probe()
+    if (candidate && existsSync(candidate)) return candidate
+  }
+  return 'Vimina.exe'
+}
 
 // ---------- stdio JSON-RPC client ----------
 
@@ -70,7 +101,7 @@ export class ViminaClient {
       })
       child.on('error', (err) => {
         this.child = null
-        for (const [, cb] of this.pending) cb({ id: 0, ok: false, error: `Vimina 启动失败: ${err.message}` })
+        for (const [, cb] of this.pending) cb({ id: 0, ok: false, error: `Vimina 启动失败: ${err.message}（请在 DSH 设置→插件→vimina 配置 exePath，或设置环境变量 VIMINA_EXE，或将 Vimina.exe 加入 PATH）` })
         this.pending.clear()
         reject(err)
       })
@@ -191,7 +222,7 @@ function mkTool(client: ViminaClient, timeoutMs: number, options: {
 // ---------- plugin ----------
 
 export function apply(ctx: Context, config: Config = {}): void {
-  const exePath = config.exePath ?? 'Vimina.exe'
+  const exePath = resolveExePath(config.exePath)
   const timeoutMs = config.timeoutMs ?? 60000
   const client = new ViminaClient(exePath)
 
