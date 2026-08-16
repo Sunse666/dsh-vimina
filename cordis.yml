@@ -4,5 +4,6 @@
     - id: vimina
       name: dsh-vimina
       config:
-        exePath: D:\IO\dotnet\Vimina\bin\Debug\net8.0-windows\Vimina.exe
+        # 改为你机器上 Vimina.exe 的绝对路径（如 C:\Tools\Vimina\Vimina.exe）
+        exePath: /absolute/path/to/Vimina.exe
         timeoutMs: 60000
