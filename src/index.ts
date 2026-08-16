@@ -14,10 +14,12 @@ export interface Config {
   timeoutMs?: number
 }
 
-export const Config = {
-  exePath: 'Vimina.exe',
-  timeoutMs: 60000,
-}
+import Schema from '@deepseek-ai/schemastery'
+
+export const Config: Schema<Config> = Schema.object({
+  exePath: Schema.string().default('Vimina.exe'),
+  timeoutMs: Schema.number().default(60000),
+})
 
 // ---------- stdio JSON-RPC client ----------
 
@@ -67,6 +69,7 @@ export class ViminaClient {
         process.stderr.write(`[vimina] ${chunk.toString()}`)
       })
       child.on('error', (err) => {
+        this.child = null
         for (const [, cb] of this.pending) cb({ id: 0, ok: false, error: `Vimina 启动失败: ${err.message}` })
         this.pending.clear()
         reject(err)
@@ -188,8 +191,8 @@ function mkTool(client: ViminaClient, timeoutMs: number, options: {
 // ---------- plugin ----------
 
 export function apply(ctx: Context, config: Config = {}): void {
-  const exePath = config.exePath ?? Config.exePath
-  const timeoutMs = config.timeoutMs ?? Config.timeoutMs
+  const exePath = config.exePath ?? 'Vimina.exe'
+  const timeoutMs = config.timeoutMs ?? 60000
   const client = new ViminaClient(exePath)
 
   const tools = [
