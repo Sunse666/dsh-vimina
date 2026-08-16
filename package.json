@@ -18,8 +18,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/<your-github-name>/dsh-vimina.git",
-    "directory": "dsh-plugin"
+    "url": "git+https://github.com/Sunse666/dsh-vimina.git"
+  },
+  "author": {
+    "name": "sunny_lynn",
+    "url": "https://github.com/Sunse666"
   },
   "type": "module",
   "main": "lib/index.js",
@@ -32,7 +35,7 @@
     "./package.json": "./package.json"
   },
   "files": [
-    "lib/index.js",
+    "lib/**/*.js",
     "lib/types/**/*.d.ts"
   ],
   "scripts": {

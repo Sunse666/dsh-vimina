@@ -1,6 +1,6 @@
 # dsh-vimina — DeepSeek Harness Cordis 插件
 
-把 [Vimina](https://github.com/<your-name>/Vimina) 的 Windows GUI 自动化能力注册为 DSH 原生工具，
+把 [Vimina](https://github.com/Sunse666/Vimina) 的 Windows GUI 自动化能力注册为 DSH 原生工具，
 模型可直接调用扫描/点击/输入/按键/脚本/截图/窗口/鼠标/VMA 引擎控制等能力，无需视觉模型。
 （Vimina 为独立项目：基于 .NET 8 的 Windows GUI 自动化服务，提供 `Vimina.exe serve` stdio 入口。）
 
@@ -94,22 +94,6 @@ node --experimental-strip-types test/plugin-test.ts
 
 > 注意：`plugin-test.ts` 会真实 spawn Vimina 执行工具，在受限沙箱里会被 EPERM 拦截
 > （判定为 SKIP）；在正常 DSH 环境可直接跑通。
-
-## 发布（上传到仓库 / npm）
-
-按 DeepSeek Harness 官方插件规范（参考 `packages/fs/tool-fs`）准备：
-
-1. **构建产物**：`npm run build`（tsc 编译 `src` → `lib/index.js` + `lib/types/**/*.d.ts`，
-   `rewriteRelativeImportExtensions` 会把相对 `.ts` 导入重写为 `.js`）。`prepublishOnly`
-   会在 `npm publish` 前自动构建。
-2. **package.json 发布字段**：`name`（如 `dsh-vimina`）、`version`（semver）、
-   `publishConfig.access: public`、`repository`（GitHub 地址）、`files`（仅 lib）、
-   `peerDependencies`（`@deepseek-ai/cordis`、`@deepseek-ai/dsh-tools`）、`license`、`engines`。
-3. **LICENSE**：MIT 许可证文件（已在仓库根）。
-4. **发布 npm**：`npm publish`（需要 npm 账号；私有/未登录可先用 `npm pack` 检查产物）。
-5. **GitHub 分享**：官方建议给仓库添加 `dsh-plugin` 话题，便于社区发现；
-   CONTRIBUTING 明确"创建插件并分享给其他人"是官方认可的生态贡献方式。
-6. **挂载示例**：`cordis.yml` 已提供 `dsh web --patch .../cordis.yml` 的挂载模板。
 
 ## AI 使用指南（注入 vimina_info）
 
